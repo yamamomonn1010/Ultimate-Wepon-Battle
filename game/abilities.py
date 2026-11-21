@@ -7,7 +7,7 @@ from unicodedata import normalize
 
 
 AbilityStatus = Literal["分類済み", "未分類", "爆散対象"]
-MainEffect = Literal["攻撃", "反射", "防御", "回復"]
+MainEffect = Literal["攻撃", "反射", "防御", "回復", "運操作"]
 
 # 発動条件は文頭、代償は「代わりに」などで始まる文末の部分を読む。
 CONDITION = re.compile(
@@ -31,6 +31,7 @@ EFFECT_PATTERNS: tuple[tuple[MainEffect, str], ...] = (
     ("反射", r"(?:相手の)?攻撃を反射(?:する|できる)"),
     ("防御", r"無敵になる|(?:相手の)?攻撃を防ぐ"),
     ("回復", r"(?:自分の)?体力を回復する"),
+    ("運操作", r"(?:自分の)?運を(?:上げる|操作する)"),
 )
 
 

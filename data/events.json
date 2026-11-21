@@ -1,0 +1,28 @@
+[
+  {
+    "id": "referee_sneeze",
+    "kind": "flavor",
+    "probability": 3,
+    "condition": "always",
+    "effect": "add_message",
+    "message": "審判がくしゃみをした！"
+  },
+  {
+    "id": "awakening",
+    "kind": "score",
+    "probability": 1,
+    "condition": "score_gap",
+    "condition_value": 1,
+    "effect": "add_to_trailing",
+    "effect_value": 1,
+    "message": "劣勢側が突然覚醒した！"
+  },
+  {
+    "id": "meteor",
+    "kind": "outcome",
+    "probability": 1,
+    "condition": "has_winner",
+    "effect": "force_draw",
+    "message": "隕石が落下した！"
+  }
+]

@@ -1,6 +1,7 @@
 """MVP第1段階の能力解析と対戦判定のテスト。"""
 
 from dataclasses import replace
+from functools import partial
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -65,13 +66,14 @@ class AbilityAnalysisTests(TestCase):
 class BattleTests(TestCase):
     def setUp(self) -> None:
         self.rules = load_element_rules()
+        self.resolve_battle = partial(resolve_battle, seed=0, events=())
 
     def test_attribute_advantage_in_both_player_positions(self) -> None:
         for stronger, weaker in (("水", "炎"), ("炎", "風"), ("風", "水")):
             cases = ((stronger, weaker, "1P", (2, 0)), (weaker, stronger, "2P", (0, 2)))
             for first, second, winner, expected_points in cases:
                 with self.subTest(first=first, second=second):
-                    result = resolve_battle(Weapon("左", first, RECOVERY), Weapon("右", second, RECOVERY), self.rules)
+                    result = self.resolve_battle(Weapon("左", first, RECOVERY), Weapon("右", second, RECOVERY), self.rules)
                     assert result.scores is not None
                     self.assertEqual(tuple(score.attribute_points for score in result.scores), expected_points)
                     self.assertEqual(result.provisional_outcome, winner)
@@ -81,7 +83,7 @@ class BattleTests(TestCase):
         for first, second in (("炎", "炎"), ("炎", "水")):
             with self.subTest(first=first, second=second):
                 rules = replace(self.rules, advantages=frozenset({("炎", "風")}))
-                result = resolve_battle(Weapon("左", first, RECOVERY), Weapon("右", second, RECOVERY), rules)
+                result = self.resolve_battle(Weapon("左", first, RECOVERY), Weapon("右", second, RECOVERY), rules)
                 assert result.scores is not None
                 self.assertEqual(tuple(score.attribute_points for score in result.scores), (0, 0))
 
@@ -93,7 +95,7 @@ class BattleTests(TestCase):
             (attack, reflection, (0, 1), "2P"),
         ):
             with self.subTest(winner=winner):
-                result = resolve_battle(first, second, self.rules)
+                result = self.resolve_battle(first, second, self.rules)
                 assert result.scores is not None
                 self.assertEqual(tuple(score.ability_matchup_points for score in result.scores), expected_points)
                 self.assertEqual(result.final_outcome, winner)
@@ -102,7 +104,7 @@ class BattleTests(TestCase):
     def test_reflection_has_no_bonus_against_nonattack_or_other_reflection(self) -> None:
         for opponent_ability in (RECOVERY, REFLECTION, UNKNOWN):
             with self.subTest(opponent_ability=opponent_ability):
-                result = resolve_battle(
+                result = self.resolve_battle(
                     Weapon("鏡", "水", REFLECTION),
                     Weapon("相手", "水", opponent_ability),
                     self.rules,
@@ -111,7 +113,7 @@ class BattleTests(TestCase):
                 self.assertEqual(tuple(score.ability_matchup_points for score in result.scores), (0, 0))
 
     def test_unknown_ability_gets_the_same_base_point(self) -> None:
-        result = resolve_battle(Weapon("暦", "風", UNKNOWN), Weapon("薬箱", "風", RECOVERY), self.rules)
+        result = self.resolve_battle(Weapon("暦", "風", UNKNOWN), Weapon("薬箱", "風", RECOVERY), self.rules)
         assert result.scores is not None
         self.assertEqual(tuple(score.ability_base_points for score in result.scores), (1, 1))
         self.assertIn("自由枠の基本点", result.ability_analyses[0].reason)
@@ -119,7 +121,7 @@ class BattleTests(TestCase):
     def test_one_explosion_gives_other_player_win_without_scoring(self) -> None:
         for abilities, winner in (((GUARANTEE, DIRECT_ATTACK), "2P"), ((DIRECT_ATTACK, GUARANTEE), "1P")):
             with self.subTest(winner=winner), patch("game.battle.ScoreBreakdown") as score_breakdown:
-                result = resolve_battle(
+                result = self.resolve_battle(
                     Weapon("左", "水", abilities[0]),
                     Weapon("右", "炎", abilities[1]),
                     self.rules,
@@ -131,13 +133,13 @@ class BattleTests(TestCase):
                 self.assertIn("爆散", result.reasons[0])
 
     def test_both_explosions_give_draw_without_scoring(self) -> None:
-        result = resolve_battle(Weapon("左", "水", GUARANTEE), Weapon("右", "炎", GUARANTEE), self.rules)
+        result = self.resolve_battle(Weapon("左", "水", GUARANTEE), Weapon("右", "炎", GUARANTEE), self.rules)
         self.assertEqual(result.final_outcome, "引き分け")
         self.assertIsNone(result.provisional_outcome)
         self.assertIsNone(result.scores)
 
     def test_equal_scores_give_normal_draw(self) -> None:
-        result = resolve_battle(Weapon("左", "風", RECOVERY), Weapon("右", "風", RECOVERY), self.rules)
+        result = self.resolve_battle(Weapon("左", "風", RECOVERY), Weapon("右", "風", RECOVERY), self.rules)
         assert result.scores is not None
         self.assertEqual(tuple(score.total for score in result.scores), (1, 1))
         self.assertEqual(result.provisional_outcome, "引き分け")
