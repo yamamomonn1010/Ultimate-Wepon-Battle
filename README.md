@@ -6,3 +6,17 @@
 武器の名前・属性・特殊能力を設定し、能力や属性の相性、運、いろいろなイベントなどによって勝敗が決まります。
 
 現在、企画・開発中です。
+
+## Web版の起動
+
+リポジトリのルートで、Python が使えるターミナルから実行します。
+
+```bash
+python -m pip install -r requirements.txt
+python -m flask --app app run
+```
+
+同じPCのブラウザで `http://127.0.0.1:5000` を開き、1Pと2Pの武器を入力します。
+「次へ」で実況を進め、「実況をスキップ」で結果まで進めます。
+
+テストは `python -m unittest discover -s tests -v` で実行できます。

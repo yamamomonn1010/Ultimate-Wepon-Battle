@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}対戦{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='battle.js') }}" defer></script>
+{% endblock %}
+{% block content %}
+<section aria-labelledby="page-title">
+  <h1 id="page-title">対戦</h1>
+  <div class="players">
+    {% for player in players %}
+    {% set entry = entries[loop.index0] %}
+    <article class="player player-{{ loop.index }} summary">
+      <h2>{{ player }} <span>{{ entry.element }}</span></h2>
+      <p class="weapon-name">{{ entry.name }}</p>
+      <p class="ability">{{ entry.ability }}</p>
+    </article>
+    {% endfor %}
+  </div>
+
+  <section class="battle" aria-labelledby="commentary-title">
+    <h2 id="commentary-title">戦闘実況</h2>
+    <ol id="commentary" aria-live="polite" aria-relevant="additions text">
+      {% for line in commentary %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ol>
+    <div id="playback" class="actions" hidden>
+      <button id="advance" type="button">次へ</button>
+      <button id="skip" class="secondary" type="button">実況をスキップ</button>
+    </div>
+  </section>
+
+  <section id="result" class="result" aria-labelledby="verdict">
+    <h2 id="verdict" tabindex="-1">{{ verdict }}</h2>
+    <form method="post" action="{{ url_for('arena') }}" class="actions">
+      {% for player in players %}
+      {% set entry = entries[loop.index0] %}
+      <input type="hidden" name="{{ player }}_name" value="{{ entry.name }}">
+      <input type="hidden" name="{{ player }}_element" value="{{ entry.element }}">
+      <textarea hidden name="{{ player }}_ability">
+{{ entry.ability }}</textarea>
+      {% endfor %}
+      <button type="submit">同じ武器で再戦</button>
+      <a class="secondary" href="{{ url_for('arena') }}">武器を作り直す</a>
+    </form>
+  </section>
+</section>
+{% endblock %}

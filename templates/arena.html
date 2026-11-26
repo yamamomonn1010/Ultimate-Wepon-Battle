@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}武器作成{% endblock %}
+{% block content %}
+<section aria-labelledby="page-title">
+  <h1 id="page-title">武器を作って対戦</h1>
+  <form method="post" action="{{ url_for('arena') }}">
+    <div class="players">
+      {% for player in players %}
+      {% set entry = entries[loop.index0] %}
+      <fieldset class="player player-{{ loop.index }}">
+        <legend>{{ player }}</legend>
+        {% if errors and player in errors %}
+        <ul class="errors" role="alert" id="{{ player }}-errors">
+          {% for error in errors[player] %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <label for="{{ player }}-name">武器名 <small>30文字まで</small></label>
+        <input id="{{ player }}-name" name="{{ player }}_name" value="{{ entry.name }}" required>
+        <label for="{{ player }}-element">属性</label>
+        <select id="{{ player }}-element" name="{{ player }}_element" required>
+          <option value="" {% if entry.element not in elements %}selected{% endif %} disabled>属性を選択</option>
+          {% for element in elements %}
+          <option value="{{ element }}"{% if element == entry.element %} selected{% endif %}>{{ element }}</option>
+          {% endfor %}
+        </select>
+        <label for="{{ player }}-ability">特殊能力 <small>50文字まで</small></label>
+        <textarea id="{{ player }}-ability" name="{{ player }}_ability" rows="3" required>
+{{ entry.ability }}</textarea>
+      </fieldset>
+      {% endfor %}
+    </div>
+    <div class="actions">
+      <button type="submit">対戦開始</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

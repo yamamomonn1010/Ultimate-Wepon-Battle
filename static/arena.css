@@ -1,0 +1,141 @@
+:root {
+  color-scheme: dark;
+  font-family: ui-monospace, "Hiragino Kaku Gothic ProN", "Yu Gothic", monospace;
+  color: #f5efe4;
+  background: #15131c;
+  --panel: #211f2c;
+  --field: #191721;
+  --line: #524d62;
+  --muted: #c2bbc9;
+  --gold: #ffda7a;
+  --coral: #ff9189;
+  --mint: #8be2cc;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #282033, #15131c 420px);
+  min-height: 100vh;
+}
+
+.shell {
+  width: min(100% - 2rem, 54rem);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3.5rem) 0 3rem;
+}
+
+.masthead {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--line);
+}
+
+.brand {
+  display: inline-block;
+  color: var(--gold);
+  font-weight: 900;
+  font-size: clamp(2.25rem, 7vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: .08em;
+  text-decoration: none;
+  text-shadow: 3px 3px #60472e;
+}
+
+.brand span { font-size: .35em; }
+.masthead p { margin: .75rem 0 0; color: var(--muted); }
+h1 { font-size: clamp(1.3rem, 4vw, 1.9rem); margin: 1.6rem 0 1rem; }
+h2 { margin: 0; font-size: 1.1rem; }
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.player {
+  --accent: var(--coral);
+  min-width: 0;
+  margin: 0;
+  padding: 1rem 1.2rem 1.2rem;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  background: var(--panel);
+  box-shadow: 4px 4px #100e16;
+}
+
+.player-2 { --accent: var(--mint); }
+
+legend {
+  padding: 0 .5rem;
+  margin-left: -.5rem;
+  color: var(--accent);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+label { display: block; margin: .85rem 0 .4rem; font-weight: 700; }
+label:first-of-type { margin-top: 0; }
+small { color: var(--muted); font-weight: 400; }
+
+input, select, textarea {
+  width: 100%;
+  padding: .65rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--field);
+  color: inherit;
+  font: inherit;
+}
+
+textarea { resize: vertical; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  margin-top: 1.15rem;
+}
+
+button, .secondary {
+  display: inline-block;
+  padding: .65rem 1rem;
+  border: 2px solid var(--gold);
+  background: var(--gold);
+  color: #201721;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:hover { background: #ffebad; }
+.secondary { background: transparent; color: var(--gold); }
+.secondary:hover { background: #383044; }
+
+.errors { margin: 0 0 1rem; padding-left: 1.25rem; color: var(--coral); }
+.summary h2 { color: var(--accent); }
+.summary h2 span { margin-left: .5rem; color: var(--muted); }
+.weapon-name { margin: .5rem 0; font-weight: 800; }
+.ability { margin: 0; color: var(--muted); white-space: pre-wrap; }
+.weapon-name, .ability, #commentary { overflow-wrap: anywhere; }
+
+.battle, .result {
+  margin-top: 1.3rem;
+  padding: 1rem 1.2rem;
+  border: 2px solid var(--line);
+  background: var(--panel);
+}
+
+#commentary { padding-left: 1.5rem; margin-bottom: 0; }
+#commentary li + li { margin-top: .45rem; }
+.result { border-color: var(--gold); }
+.result h2 { color: var(--gold); font-size: clamp(1.5rem, 4vw, 2rem); }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 38rem) {
+  .players { grid-template-columns: 1fr; }
+}
